@@ -1,0 +1,136 @@
+#include<iostream> 
+#include<string.h> 
+using namespace std; 
+class HashFunction { 
+typedef struct hash { 
+long key; 
+char name[100]; 
+} hash; 
+hash h[10]; // Array of size 10 for the hash table 
+public: 
+HashFunction();  
+void insert();  
+void display();  
+int find(long); 
+void Delete(long); 
+}; 
+HashFunction::HashFunction() { 
+    // Initialize the hash table with key = -1 (empty) and name = "NULL" 
+    for(int i = 0; i < 10; i++) { 
+        h[i].key = -1;  
+        strcpy(h[i].name, "NULL"); 
+    } 
+} 
+ 
+void HashFunction::Delete(long k) { 
+    int index = find(k); 
+    if(index == -1) { 
+        cout << "\n\tKey Not Found"; 
+    } else { 
+        h[index].key = -1; 
+        strcpy(h[index].name, "NULL"); 
+        cout << "\n\tKey is Deleted"; 
+    } 
+} 
+ 
+int HashFunction::find(long k) { 
+    int index = k % 10; // Hash function (modulo 10) 
+     
+    for(int i = 0; i < 10; i++) { 
+        int idx = (index + i) % 10; // Linear probing 
+        if(h[idx].key == k) { 
+            cout << "\n\t" << h[idx].key << " is Found at index " << idx << " with Name " << h[idx].name; 
+            return idx; 
+        } 
+    } 
+    return -1; // If the key is not found 
+} 
+ 
+void HashFunction::display() { 
+    cout << "\n\t\tKey\t\tName"; 
+    for(int i = 0; i < 10; i++) { 
+        cout << "\n\th[" << i << "]\t" << h[i].key << "\t\t" << h[i].name; 
+    } 
+} 
+ 
+void HashFunction::insert() { 
+    char ans, name[100]; 
+    long key; 
+    int cnt = 0; 
+     
+    do { 
+        if(cnt >= 10) { 
+            cout << "\n\tHash Table is FULL"; 
+            break; 
+        } 
+         
+        cout << "\n\tEnter a Telephone No: ";  
+        cin >> key; 
+        cout << "\n\tEnter a Client Name: ";  
+        cin >> name; 
+         
+        int index = key % 10; // Hash function (modulo 10) 
+        bool inserted = false; 
+         
+        // Linear probing to find an empty slot 
+        for(int i = 0; i < 10; i++) { 
+            int idx = (index + i) % 10; 
+            if(h[idx].key == -1) { // If the slot is empty 
+                h[idx].key = key; 
+                strcpy(h[idx].name, name); 
+                inserted = true; 
+                break; 
+            } 
+        } 
+ 
+        if(inserted) { 
+            cnt++;  // Increment the count after successful insertion 
+        } else { 
+            cout << "\n\tNo space available to insert new key"; 
+        } 
+ 
+        cout << "\n\tDo You Want to Insert More Keys (y/n): "; 
+        cin >> ans; 
+    } while(ans == 'y' || ans == 'Y'); 
+} 
+ 
+int main() { 
+    long k; 
+    int ch, index; 
+    char ans; 
+    HashFunction obj; 
+     
+    do { 
+        cout << "\n\t***** Dictionary (ADT) *****"; 
+        cout << "\n\t1. Insert\n\t2. Display\n\t3. Find\n\t4. Delete\n\t5. Exit";  
+        cout << "\n\tEnter Your Choice: "; 
+        cin >> ch; 
+         
+        switch(ch) { 
+            case 1:  
+                obj.insert(); 
+                break; 
+            case 2:  
+                obj.display(); 
+                break; 
+            case 3: 
+                cout << "\n\tEnter a Key Which You Want to Search: ";  
+                cin >> k; 
+                index = obj.find(k);  
+                if(index == -1) { 
+                    cout << "\n\tKey Not Found"; 
+                } 
+                break; 
+            case 4: 
+                cout << "\n\tEnter a Key Which You Want to Delete: ";  
+                cin >> k; 
+                obj.Delete(k); 
+                break; 
+            case 5: 
+break; 
+} 
+cout << "\n\tDo You Want to Continue in Main Menu (y/n): "; 
+cin >> ans; 
+} while(ans == 'y' || ans == 'Y'); 
+return 0; 
+}

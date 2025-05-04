@@ -1,0 +1,108 @@
+import os 
+ 
+# File names 
+EMPLOYEE_FILE = "employees.txt" 
+INDEX_FILE = "index.txt" 
+ 
+# Load index from index file into dictionary 
+def load_index(): 
+    index = {} 
+    if os.path.exists(INDEX_FILE): 
+        with open(INDEX_FILE, "r") as f: 
+            for line in f: 
+                eid, pos = line.strip().split() 
+                index[eid] = int(pos) 
+    return index 
+ 
+# Add employee 
+def add_employee(): 
+    eid = input("Enter Employee ID: ") 
+    name = input("Enter Name: ") 
+    desig = input("Enter Designation: ") 
+    salary = input("Enter Salary: ") 
+ 
+    index = load_index() 
+    if eid in index: 
+        print("Employee already exists.") 
+        return 
+ 
+    with open(EMPLOYEE_FILE, "a") as ef: 
+        pos = ef.tell() 
+        ef.write(f"{eid},{name},{desig},{salary}\n") 
+ 
+    with open(INDEX_FILE, "a") as idx: 
+        idx.write(f"{eid} {pos}\n") 
+ 
+    print("Employee added successfully.") 
+ 
+# Display employee 
+def display_employee(): 
+    eid = input("Enter Employee ID to search: ") 
+    index = load_index() 
+ 
+    if eid not in index: 
+        print("Employee not found.") 
+        return 
+ 
+    with open(EMPLOYEE_FILE, "r") as ef: 
+        ef.seek(index[eid]) 
+        line = ef.readline().strip() 
+        eid, name, desig, salary = line.split(",") 
+        print("\nEmployee Details:") 
+        print(f"ID: {eid}") 
+        print(f"Name: {name}") 
+        print(f"Designation: {desig}") 
+        print(f"Salary: {salary}") 
+ 
+# Delete employee 
+def delete_employee(): 
+    eid = input("Enter Employee ID to delete: ") 
+    index = load_index() 
+ 
+    if eid not in index: 
+        print("Employee not found.") 
+        return 
+ 
+    with open(EMPLOYEE_FILE, "r") as ef: 
+        lines = ef.readlines() 
+ 
+    new_index = {} 
+    with open(EMPLOYEE_FILE, "w") as ef: 
+        pos = 0 
+        for line in lines: 
+            current_eid = line.split(",")[0] 
+            if current_eid != eid: 
+                ef.write(line) 
+                new_index[current_eid] = pos 
+                pos += len(line) 
+ 
+    # Write updated index 
+    with open(INDEX_FILE, "w") as idx: 
+        for k, v in new_index.items(): 
+            idx.write(f"{k} {v}\n") 
+ 
+    print("Employee deleted successfully.") 
+ 
+# Menu 
+def main(): 
+    while True: 
+        print("\nEmployee Management System") 
+        print("1. Add Employee") 
+        print("2. Display Employee") 
+        print("3. Delete Employee") 
+        print("4. Exit") 
+        choice = input("Enter your choice: ") 
+ 
+        if choice == "1": 
+            add_employee() 
+        elif choice == "2": 
+            display_employee() 
+        elif choice == "3": 
+            delete_employee() 
+        elif choice == "4": 
+            break 
+        else: 
+            print("Invalid choice!") 
+ 
+if __name__ == "__main__": 
+    main()

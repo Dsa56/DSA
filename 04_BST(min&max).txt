@@ -1,0 +1,190 @@
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
+
+class bstnode {
+public:
+    int data;
+    bstnode *left, *right;
+    bstnode(int x) {
+        data = x;
+        left = right = NULL;
+    }
+};
+
+class bst {
+    bstnode* root;
+
+public:
+    bst() {
+        root = NULL;
+    }
+
+    bstnode* create();
+    void insert(int x);
+    bstnode* find(int x);
+    bstnode* minvalue(bstnode* root);
+    bstnode* maxvalue(bstnode* root);
+    int longest_path(bstnode* T);
+    void display(bstnode* t);
+    bstnode* mirror(bstnode* t);
+    bstnode* getRoot() { return root; }
+};
+
+bstnode* bst::create() {
+    int x, i, n;
+    cout << "Enter total number of nodes: ";
+    cin >> n;
+    cout << "Enter tree values:\n";
+    for (i = 0; i < n; i++) {
+        cin >> x;
+        insert(x);
+    }
+    return root;
+}
+
+void bst::insert(int x) {
+    bstnode *p = root, *q = NULL;
+    bstnode *r = new bstnode(x);
+
+    if (root == NULL) {
+        root = r;
+        return;
+    }
+
+    while (p != NULL) {
+        q = p;
+        if (x < p->data)
+            p = p->left;
+        else
+            p = p->right;
+    }
+
+    if (x < q->data)
+        q->left = r;
+    else
+        q->right = r;
+}
+
+bstnode* bst::find(int x) {
+    bstnode* p = root;
+    while (p != NULL) {
+        if (x == p->data)
+            return p;
+        if (x < p->data)
+            p = p->left;
+        else
+            p = p->right;
+    }
+    return NULL;
+}
+
+bstnode* bst::minvalue(bstnode* root) {
+    if (root == NULL) return NULL;
+    while (root->left != NULL)
+        root = root->left;
+    cout << root->data;
+    return root;
+}
+
+bstnode* bst::maxvalue(bstnode* root) {
+    if (root == NULL) return NULL;
+    while (root->right != NULL)
+        root = root->right;
+    cout << root->data;
+    return root;
+}
+
+int bst::longest_path(bstnode* T) {
+    if (T == NULL) return 0;
+    int hl = longest_path(T->left);
+    int hr = longest_path(T->right);
+    return max(hl, hr) + 1;
+}
+
+void bst::display(bstnode* t) {
+    if (t != NULL) {
+        display(t->left);
+        cout << "\t" << t->data;
+        display(t->right);
+    }
+}
+
+bstnode* bst::mirror(bstnode* t) {
+    bstnode* temp;
+    if (t != NULL) {
+        temp = t->left;
+        t->left = mirror(t->right);
+        t->right = mirror(temp);
+    }
+    return t;
+}
+
+int main() {
+    int ch, x, i;
+    bst b;
+    bstnode *p, *root = NULL;
+
+    do {
+        cout << "\n1. Create";
+        cout << "\n2. Find";
+        cout << "\n3. Find Min";
+        cout << "\n4. Find Max";
+        cout << "\n5. Longest Path";
+        cout << "\n6. Display";
+        cout << "\n7. Mirror";
+        cout << "\n8. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> ch;
+
+        switch (ch) {
+            case 1:
+                root = b.create();
+                break;
+
+            case 2:
+                cout << "Enter node to be searched: ";
+                cin >> x;
+                p = b.find(x);
+                if (p == NULL)
+                    cout << "Node not found";
+                else
+                    cout << "Node found: " << p->data;
+                break;
+
+            case 3:
+                cout << "\nThe minimum value: ";
+                b.minvalue(root);
+                break;
+
+            case 4:
+                cout << "\nThe maximum value: ";
+                b.maxvalue(root);
+                break;
+
+            case 5:
+                i = b.longest_path(root);
+                cout << "Longest path in tree: " << i;
+                break;
+
+            case 6:
+                cout << "\nIn-order Display of BST: ";
+                b.display(root);
+                break;
+
+            case 7:
+                root = b.mirror(root);
+                cout << "\nMirrored Tree (In-order): ";
+                b.display(root);
+                break;
+
+            case 8:
+                exit(0);
+
+            default:
+                cout << "\nInvalid choice.";
+        }
+    } while (ch != 8);
+
+    return 0;
+}
